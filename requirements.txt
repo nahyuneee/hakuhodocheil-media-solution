@@ -1,4 +1,5 @@
 matplotlib
+matplotlib-venn
 pandas
 numpy
 streamlit
