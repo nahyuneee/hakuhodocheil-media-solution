@@ -2,8 +2,9 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import sys
+from matplotlib.ticker import FuncFormatter
 
+import sys
 import collections.abc #에러가나면, 한줄 띄거나 붙이거나 해서 새로고침하기
 
 # Import collections.abc safely based on Python version
@@ -158,9 +159,8 @@ if cprp_value and budget_value:
     st.subheader("Summary of Calculations")
     st.table(summary_df)
 
-# 추가2: Summary Table 기반으로 Scatter 그래프 출력 (Expected Reach+ 및 Reach3+ 표기)
-
-def plot_scatter_with_summary(scatter_data, target, plan_grp, expected_reach_plus, expected_reach3):
+# 추가2: Summary Table 기반으로 Scatter 그래프 출력 (Expected Reach+ 및 Reach3+ 표기, X축 조정)
+def plot_scatter_with_summary(scatter_data, target, plan_grp, expected_reach_plus, expected_reach3, x_max_input):
     """Summary Table 데이터와 동기화된 Scatter Plot만 출력"""
     plt.figure(figsize=(10, 6))
     
@@ -176,10 +176,11 @@ def plot_scatter_with_summary(scatter_data, target, plan_grp, expected_reach_plu
     # Summary Table 기반 점 추가
     if expected_reach_plus not in ["N/A", 0]:
         plt.scatter([plan_grp], [expected_reach_plus], color="red", s=150, label="Expected Reach+", marker="X")
-
     if expected_reach3 not in ["N/A", 0]:
         plt.scatter([plan_grp], [expected_reach3], color="blue", s=150, label="Expected Reach3+", marker="o")
 
+    # 사용자 입력 X축 최대값 설정
+    plt.xlim(0, x_max_input)
     plt.title(f"Scatter Plot with Summary Data for {target}")
     plt.xlabel("GRP")
     plt.ylabel("Reach (%)")
@@ -187,17 +188,8 @@ def plot_scatter_with_summary(scatter_data, target, plan_grp, expected_reach_plu
     plt.grid()
     st.pyplot(plt)
 
-# 그래프 출력 (Expected Reach+ 및 Reach3+ 표기)
-expected_reach3 = reach_results.get("reach 3+", "N/A")
-plot_scatter_with_summary(scatter_data, selected_target, plan_grp, expected_reach_plus, expected_reach3)
-
-
-# 추가3: X축을 Budget으로 변환하여 그래프 출력
-
-import matplotlib.pyplot as plt
-from matplotlib.ticker import FuncFormatter  # 정확한 ticker import
-
-def plot_budget_scatter_with_summary(scatter_data, target, plan_grp, expected_reach_plus, expected_reach3, cprp_value):
+# 추가3: Budget 기반 Scatter 그래프 출력 (X축 조정)
+def plot_budget_scatter_with_summary(scatter_data, target, plan_grp, expected_reach_plus, expected_reach3, cprp_value, x_max_input):
     """Summary Table 데이터와 동기화된 Budget 기반 Scatter Plot 출력"""
     plt.figure(figsize=(10, 6))
 
@@ -215,12 +207,12 @@ def plot_budget_scatter_with_summary(scatter_data, target, plan_grp, expected_re
     if expected_reach_plus not in ["N/A", 0]:
         budget_for_reach_plus = plan_grp * (cprp_value / 1000)
         plt.scatter([budget_for_reach_plus], [expected_reach_plus], color="red", s=150, label="Expected Reach+", marker="X")
-
     if expected_reach3 not in ["N/A", 0]:
         budget_for_reach3 = plan_grp * (cprp_value / 1000)
         plt.scatter([budget_for_reach3], [expected_reach3], color="blue", s=150, label="Expected Reach3+", marker="o")
 
-    # X축 라벨을 일반 숫자로 설정 (과학적 표기법 제거)
+    # 사용자 입력 X축 최대값 설정
+    plt.xlim(0, x_max_input)
     ax = plt.gca()
     ax.xaxis.set_major_formatter(FuncFormatter(lambda x, _: f"{int(x):,}"))
 
@@ -231,13 +223,34 @@ def plot_budget_scatter_with_summary(scatter_data, target, plan_grp, expected_re
     plt.grid()
     st.pyplot(plt)
 
-# 세 번째 그래프 출력
-if cprp_value:
+# 사용자 입력을 통한 X축 최대값 설정 및 그래프 출력
+if cprp_value and budget_value:
+    # 두 번째 그래프 X축 최대값 입력
+    st.subheader("Adjust X-axis Max for GRP-based Scatter Plot")
+    x_max_input_scatter = st.number_input("Enter X-axis Max for GRP Plot", min_value=100, max_value=5000, value=3000)
+
+    # 두 번째 그래프 출력
+    expected_reach3 = reach_results.get("reach 3+", "N/A")
+    plot_scatter_with_summary(
+        scatter_data, 
+        selected_target, 
+        plan_grp, 
+        expected_reach_plus, 
+        expected_reach3, 
+        x_max_input_scatter
+    )
+
+    # 세 번째 그래프 X축 최대값 입력
+    st.subheader("Adjust X-axis Max for Budget-based Scatter Plot")
+    x_max_input_budget = st.number_input("Enter X-axis Max for Budget Plot", min_value=100, max_value=10000000, value=3000000)
+
+    # 세 번째 그래프 출력
     plot_budget_scatter_with_summary(
         scatter_data, 
         selected_target, 
         plan_grp, 
         expected_reach_plus, 
         expected_reach3, 
-        cprp_value
+        cprp_value, 
+        x_max_input_budget
     )
