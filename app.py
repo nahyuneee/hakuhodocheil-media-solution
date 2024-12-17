@@ -90,7 +90,7 @@ if uploaded_file and scatter_file:
 st.header("Part.2 TV KPI Simulation / Budgeting System")
 
 # Step 1: User input for CPRP
-cprp_input = st.text_input("Enter Expected CPRP (in 1,000 KRW)", value="1,000")
+cprp_input = st.text_input("Enter Expected CPRP (in 1,000 KRW)", value="3,000")
 cprp_input = cprp_input.replace(",", "")
 try:
     cprp_value = int(cprp_input) * 1000  # Convert to KRW
@@ -99,7 +99,7 @@ except ValueError:
     cprp_value = None
 
 # Step 2: User input for Budget
-budget_input = st.text_input("Enter Planned Budget (in 1,000 KRW)", value="10,000")
+budget_input = st.text_input("Enter Planned Budget (in 1,000 KRW)", value="500,000")
 budget_input = budget_input.replace(",", "")
 try:
     budget_value = int(budget_input) * 1000  # Convert to KRW
