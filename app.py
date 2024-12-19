@@ -226,7 +226,7 @@ def plot_budget_scatter_with_summary(scatter_data, target, plan_grp, expected_re
 # 사용자 입력을 통한 X축 최대값 설정 및 그래프 출력
 if cprp_value and budget_value:
     # 두 번째 그래프 X축 최대값 입력
-    st.subheader("GRP-based Scatter Plot")
+    st.subheader("Adjust X-axis Max for GRP-based Scatter Plot")
     x_max_input_scatter = st.number_input("그래프의 X축(GRP) 최대값을 입력하여 조절하세요.", min_value=100, max_value=5000, value=3000)
 
     # 두 번째 그래프 출력
@@ -241,7 +241,7 @@ if cprp_value and budget_value:
     )
 
     # 세 번째 그래프 X축 최대값 입력
-    st.subheader("Budget-based Scatter Plot")
+    st.subheader("Adjust X-axis Max for Budget-based Scatter Plot")
     x_max_input_budget = st.number_input("그래프의 X축(Budget,천원) 최대값을 입력하여 조절하세요.", min_value=100, max_value=10000000, value=3000000)
 
     # 세 번째 그래프 출력
