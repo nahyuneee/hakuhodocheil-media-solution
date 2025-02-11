@@ -67,6 +67,22 @@ def insert_hardcoded_data():
             40.1,55.4,65.8,80.4,73.1,87.4,94.3,15.1,18.5,48.1,14.7,
         ]
     }
+    # target 개수 확인
+    num_targets = len(data["target"])
+
+    # channel 리스트 길이 조정
+    channel_list = ["TV", "VA", "DA", "TV∪VA", "VA∪DA", "TV∪DA", "TV∪DA∪VA", "TV∩VA", "TV∩DA", "VA∩DA", "TV∩DA∩VA"]
+    data["channel"] = (channel_list * (num_targets // len(channel_list) + 1))[:num_targets]
+
+    # reach 리스트 길이 조정
+    reach_values = [59, 47.5, 61.2, ..., 14.7]  # 기존 reach 값
+    data["reach"] = (reach_values * (num_targets // len(reach_values) + 1))[:num_targets]
+
+    # 길이 출력 (디버깅용)
+    print(f"target 개수: {len(data['target'])}")
+    print(f"channel 개수: {len(data['channel'])}")
+    print(f"reach 개수: {len(data['reach'])}")
+
     return pd.DataFrame(data)
 
 # 2. 데이터 로드
